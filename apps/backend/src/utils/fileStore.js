@@ -8,6 +8,16 @@ const dataDir = path.resolve(__dirname, '../../data');
 const storeFile = path.join(dataDir, 'store.json');
 
 const defaultStore = {
+  users: [
+    {
+      id: 'admin-1',
+      name: 'Portfolio Admin',
+      email: 'admin@portfolio.local',
+      password: 'admin123',
+      role: 'admin',
+      createdAt: new Date().toISOString()
+    }
+  ],
   about: {
     name: 'Ava Lin Prusty',
     title: 'Full-Stack Developer & Designer',

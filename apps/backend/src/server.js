@@ -58,7 +58,7 @@ function makeGenericCrud(resourceName, { isSingle = false } = {}) {
       const collection = Array.isArray(store[resourceName]) ? store[resourceName] : [];
       const item = {
         ...payload,
-        id: payload.id || uuidv4()
+        id: payload.id || payload._id || uuidv4()
       };
       collection.push(item);
       store[resourceName] = collection;
@@ -68,17 +68,24 @@ function makeGenericCrud(resourceName, { isSingle = false } = {}) {
     put: (req, res) => {
       const store = readStore();
       const payload = req.body;
+      const id = req.params.id || payload.id || payload._id;
       const collection = Array.isArray(store[resourceName]) ? store[resourceName] : [];
+
       if (isSingle) {
-        store[resourceName] = { ...store[resourceName], ...payload };
+        store[resourceName] = { ...(store[resourceName] || {}), ...payload };
         writeStore(store);
         return res.json(store[resourceName]);
       }
-      const index = collection.findIndex((entry) => entry.id === payload.id || entry._id === payload._id);
+
+      if (!id) {
+        return res.status(400).json({ message: `An item id is required for ${resourceName}.` });
+      }
+
+      const index = collection.findIndex((entry) => entry.id === id || entry._id === id);
       if (index === -1) {
         return res.status(404).json({ message: `${resourceName} item not found.` });
       }
-      collection[index] = { ...collection[index], ...payload };
+      collection[index] = { ...collection[index], ...payload, id: id };
       store[resourceName] = collection;
       writeStore(store);
       return res.json(collection[index]);
@@ -87,11 +94,13 @@ function makeGenericCrud(resourceName, { isSingle = false } = {}) {
       const store = readStore();
       const id = req.params.id;
       const collection = Array.isArray(store[resourceName]) ? store[resourceName] : [];
+
       if (isSingle) {
         store[resourceName] = {};
         writeStore(store);
         return res.json({ message: `${resourceName} reset.` });
       }
+
       const nextCollection = collection.filter((entry) => entry.id !== id && entry._id !== id);
       store[resourceName] = nextCollection;
       writeStore(store);
@@ -106,14 +115,14 @@ app.get('/api/health', (_req, res) => {
 
 app.post('/api/auth/login', (req, res) => {
   const { email, password } = req.body;
-  const adminEmail = 'admin@portfolio.local';
-  const adminPassword = 'admin123';
+  const store = readStore();
+  const userRecord = (store.users || []).find((user) => user.email === email && user.password === password);
 
-  if (email !== adminEmail || password !== adminPassword) {
+  if (!userRecord) {
     return res.status(401).json({ message: 'Invalid email or password.' });
   }
 
-  const user = { id: 'admin-1', email: adminEmail, role: 'admin' };
+  const user = { id: userRecord.id, email: userRecord.email, role: userRecord.role || 'admin' };
   return res.json({
     user,
     token: createToken(user),
@@ -136,6 +145,10 @@ app.post('/api/auth/refresh', (req, res) => {
   }
 });
 
+app.get('/api/admin/me', authenticateToken, (req, res) => {
+  res.json({ user: req.user });
+});
+
 app.get('/api/about', makeGenericCrud('about', { isSingle: true }).get);
 app.put('/api/about', authenticateToken, makeGenericCrud('about', { isSingle: true }).put);
 
@@ -144,6 +157,7 @@ app.put('/api/about', authenticateToken, makeGenericCrud('about', { isSingle: tr
   app.get(`/api/${resource}`, handlers.get);
   app.post(`/api/${resource}`, authenticateToken, handlers.post);
   app.put(`/api/${resource}`, authenticateToken, handlers.put);
+  app.put(`/api/${resource}/:id`, authenticateToken, handlers.put);
   app.delete(`/api/${resource}/:id`, authenticateToken, handlers.del);
 });
 
