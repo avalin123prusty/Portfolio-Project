@@ -149,16 +149,41 @@ app.get('/api/admin/me', authenticateToken, (req, res) => {
   res.json({ user: req.user });
 });
 
+const contentModelCatalog = [
+  { name: 'about', type: 'single' },
+  { name: 'skills', type: 'collection' },
+  { name: 'projects', type: 'collection' },
+  { name: 'blogs', type: 'collection' },
+  { name: 'experience', type: 'collection' },
+  { name: 'testimonials', type: 'collection' },
+  { name: 'services', type: 'collection' },
+  { name: 'messages', type: 'collection' },
+  { name: 'media', type: 'collection' }
+];
+
 app.get('/api/about', makeGenericCrud('about', { isSingle: true }).get);
 app.put('/api/about', authenticateToken, makeGenericCrud('about', { isSingle: true }).put);
 
-['skills', 'projects', 'blogs', 'experience', 'testimonials', 'services', 'messages'].forEach((resource) => {
-  const handlers = makeGenericCrud(resource);
-  app.get(`/api/${resource}`, handlers.get);
-  app.post(`/api/${resource}`, authenticateToken, handlers.post);
-  app.put(`/api/${resource}`, authenticateToken, handlers.put);
-  app.put(`/api/${resource}/:id`, authenticateToken, handlers.put);
-  app.delete(`/api/${resource}/:id`, authenticateToken, handlers.del);
+contentModelCatalog.forEach(({ name, type }) => {
+  const handlers = makeGenericCrud(name, { isSingle: type === 'single' });
+  app.get(`/api/${name}`, handlers.get);
+
+  if (type === 'single') {
+    app.put(`/api/${name}`, authenticateToken, handlers.put);
+    return;
+  }
+
+  app.post(`/api/${name}`, authenticateToken, handlers.post);
+  app.put(`/api/${name}`, authenticateToken, handlers.put);
+  app.put(`/api/${name}/:id`, authenticateToken, handlers.put);
+  app.delete(`/api/${name}/:id`, authenticateToken, handlers.del);
+});
+
+app.get('/api/content-models', (_req, res) => {
+  res.json({
+    models: contentModelCatalog,
+    message: 'Portfolio content models ready for CRUD operations.'
+  });
 });
 
 app.post('/api/contact', (req, res) => {
