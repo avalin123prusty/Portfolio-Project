@@ -1,0 +1,15 @@
+{
+  "name": "portfolio-project",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev:backend": "npm --prefix apps/backend run dev",
+    "dev:cms": "npm --prefix apps/cms run dev",
+    "dev:frontend": "npm --prefix apps/frontend run dev",
+    "build:cms": "npm --prefix apps/cms run build",
+    "build:frontend": "npm --prefix apps/frontend run build",
+    "start:backend": "npm --prefix apps/backend run start",
+    "start:cms": "npm --prefix apps/cms run preview -- --host 0.0.0.0",
+    "start:frontend": "npm --prefix apps/frontend run start"
+  }
+}
