@@ -14,6 +14,9 @@ dist
 build
 coverage
 apps/backend/data/*.json
+apps/backend/data/*.sqlite
+apps/backend/data/*.sqlite-shm
+apps/backend/data/*.sqlite-wal
 apps/backend/uploads/*
 !apps/backend/uploads/.gitkeep
 apps/backend/data/.gitkeep
