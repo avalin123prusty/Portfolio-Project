@@ -1,6 +1,6 @@
 # Content models
 
-The API persists structured records in SQLite. `apps/backend/src/utils/fileStore.js` creates the schema and seeds a first-run portfolio; existing `store.json` data is migrated when a database is initialized.
+The API persists structured records in SQLite. `apps/backend/src/utils/fileStore.js` creates the schema and seeds a first-run portfolio; existing `store.json` data is migrated when a database is initialized. During that one-time migration, the configured `ADMIN_EMAIL` and `ADMIN_PASSWORD` replace the legacy admin credentials.
 
 ## Tables
 

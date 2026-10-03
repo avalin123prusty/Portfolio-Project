@@ -17,7 +17,7 @@ The supplied schedule includes question/submission/results language from a diffe
 | 11 | Admin analytics | Protected metrics and recent inquiries with focused tests | `Day 11: verify admin analytics access` |
 | 12 | Testing and validation | Auth, CRUD, contact/rate-limit and media integration coverage | `Day 12: test auth, CRUD, contact and media` |
 | 13 | Deployment preparation | Render blueprint, CI, Node version and app-local lockfile setup | `Day 13: prepare CI and production deployment` |
-| 14 | Final readiness | Complete setup, API, admin and deployment documentation | `Day 14: finalize project documentation` |
+| 14 | Final readiness | Complete setup/API/deployment docs, platform PORT handling, and configured-admin migration regression | `Day 14: finalize project documentation`; deployment follow-up pushed after production smoke tests |
 
 ## Run locally
 
@@ -51,4 +51,4 @@ npm run build
 
 ## Git milestones
 
-The initial three commits were already present on `main`; their history is preserved. Days 4–14 are each published as separate, descriptive commits. The original third commit is named for content CRUD; its missing authorization hardening is included in the Day 4 backend security commit rather than rewriting the remote history.
+The initial three commits were already present on `main`; their history is preserved. Days 4–14 are each published as separate, descriptive commits. Day 14 has a follow-up commit for issues caught by production start-command smoke tests. The original third commit is named for content CRUD; its missing authorization hardening is included in the Day 4 backend security commit rather than rewriting the remote history.

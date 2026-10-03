@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const dataDir = path.resolve(__dirname, '../../data');
 const databasePath = path.resolve(dataDir, process.env.DATABASE_FILE || 'portfolio.sqlite');
-const legacyStorePath = path.join(dataDir, 'store.json');
+const legacyStorePath = process.env.LEGACY_STORE_FILE || path.join(dataDir, 'store.json');
 const collectionNames = [
   'skills',
   'projects',
@@ -216,6 +216,19 @@ export function ensureStore() {
   const initialStore = fs.existsSync(legacyStorePath)
     ? normalizeStore(JSON.parse(fs.readFileSync(legacyStorePath, 'utf-8')))
     : defaultStore;
+  const adminIndex = initialStore.users.findIndex((user) => user.role === 'admin');
+  const configuredAdmin = {
+    ...(adminIndex >= 0 ? initialStore.users[adminIndex] : {}),
+    id: adminIndex >= 0 ? initialStore.users[adminIndex].id : 'admin-1',
+    email: env.ADMIN_EMAIL.toLowerCase(),
+    passwordHash: hashPassword(env.ADMIN_PASSWORD),
+    role: 'admin'
+  };
+  if (adminIndex >= 0) {
+    initialStore.users[adminIndex] = configuredAdmin;
+  } else {
+    initialStore.users.unshift(configuredAdmin);
+  }
   saveStore(initialStore);
 }
 
