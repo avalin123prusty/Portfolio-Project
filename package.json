@@ -2,12 +2,19 @@
   "name": "portfolio-project",
   "private": true,
   "version": "1.0.0",
+  "engines": {
+    "node": ">=22.13.0"
+  },
   "scripts": {
+    "setup": "npm --prefix apps/backend ci && npm --prefix apps/cms ci && npm --prefix apps/frontend ci",
     "dev:backend": "npm --prefix apps/backend run dev",
     "dev:cms": "npm --prefix apps/cms run dev",
     "dev:frontend": "npm --prefix apps/frontend run dev",
     "build:cms": "npm --prefix apps/cms run build",
     "build:frontend": "npm --prefix apps/frontend run build",
+    "test:backend": "npm --prefix apps/backend test",
+    "audit": "npm --prefix apps/backend audit && npm --prefix apps/cms audit && npm --prefix apps/frontend audit",
+    "build": "npm run build:cms && npm run build:frontend",
     "start:backend": "npm --prefix apps/backend run start",
     "start:cms": "npm --prefix apps/cms run preview -- --host 0.0.0.0",
     "start:frontend": "npm --prefix apps/frontend run start"
