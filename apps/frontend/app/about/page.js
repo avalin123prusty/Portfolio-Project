@@ -1,0 +1,11 @@
+import Link from 'next/link';
+import SiteHeader from '../components/SiteHeader';
+import SiteFooter from '../components/SiteFooter';
+import { getAbout, getContent } from '../../lib/api';
+
+export const metadata = { title: 'About | Ava Lin Prusty' };
+
+export default async function AboutPage() {
+  const [about, skills, experience] = await Promise.all([getAbout(), getContent('skills'), getContent('experience')]);
+  return <><SiteHeader name={about?.name} /><main><section className="inner-hero"><p className="eyebrow">ABOUT / THE PERSON BEHIND THE WORK</p><h1>Curious by nature.<br /><em>Careful by design.</em></h1><p>{about?.summary || about?.bio}</p></section><section className="section-wrap bio-layout"><div className="bio-label"><span>01</span><p>MY APPROACH</p></div><div><h2>{about?.title || 'Full-stack developer & designer'}</h2><p className="long-copy">{about?.bio || 'I work at the intersection of thoughtful design and dependable engineering, helping teams turn complex ideas into clear digital experiences.'}</p><p className="long-copy">Based in {about?.location || 'India'}, I bring a practical, collaborative mindset to each project: understand the real need, make deliberate choices, and care about what happens after launch.</p><Link className="underlined-link" href="/contact">Work together <span>↗</span></Link></div></section>{skills.length > 0 && <section className="skills-band"><div className="section-wrap"><div className="section-heading"><div><p className="eyebrow">THE TOOLKIT</p><h2>Things I work with.</h2></div></div><div className="skill-grid">{skills.map((skill) => <article key={skill.id}><span>{skill.category || 'PRACTICE'}</span><strong>{skill.name}</strong>{skill.level != null && <div className="skill-meter"><i style={{ width: `${Math.min(100, Math.max(0, Number(skill.level)))}%` }} /></div>}</article>)}</div></div></section>}{experience.length > 0 && <section className="section-wrap bio-layout"><div className="bio-label"><span>02</span><p>SELECTED EXPERIENCE</p></div><div className="experience-list">{experience.map((item) => <article key={item.id}><div><h3>{item.role}</h3><p>{item.company}{item.location ? ` · ${item.location}` : ''}</p><p className="long-copy">{item.description}</p></div><span>{item.period}</span></article>)}</div></section>}</main><SiteFooter about={about} /></>;
+}
