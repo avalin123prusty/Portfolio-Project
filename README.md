@@ -119,6 +119,7 @@ All paths are prefixed with `/api`. Public GETs serve portfolio content. CMS mut
 | GET | `/health` | Public | Health check |
 | POST | `/auth/login` | Public | Validate credentials, return access and refresh tokens |
 | POST | `/auth/refresh` | Public | Rotate refresh token and issue new credentials |
+| POST | `/auth/logout` | Public | Revoke the active refresh session |
 | GET | `/admin/me` | Admin | Validate current access token |
 | GET | `/admin/analytics` | Admin | Content totals and recent messages |
 | GET, PUT | `/about` | Public GET; admin PUT | Profile singleton |
@@ -158,10 +159,27 @@ A Render Blueprint is provided in `render.yaml` for the API, portfolio, and CMS.
 5. Configure SMTP variables if contact email delivery is required.
 6. If you use different service or custom domain names, update `CLIENT_URL`, `CMS_URL`, `CORS_ORIGINS`, `PUBLIC_API_URL`, `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SITE_URL`, `VITE_API_URL`, and `VITE_PORTFOLIO_URL` accordingly, then redeploy.
 
+The Blueprint's exact service commands are:
+
+| Service | Root directory | Build command | Start/publish |
+| --- | --- | --- | --- |
+| Backend API | `apps/backend` | `npm ci` | `npm start` |
+| Next.js frontend | `apps/frontend` | `npm ci && npm run build` | `npm run start` |
+| Vite CMS | `apps/cms` | `npm ci && npm run build` | Publish the `dist` directory as a Render Static Site |
+
+Set these production values (the Blueprint provides the API disk paths, public URLs, and generated JWT secrets):
+
+- API: `NODE_ENV=production`, `DATABASE_FILE=/var/data/portfolio.sqlite`, `UPLOAD_PATH=/var/data/uploads`, `PUBLIC_API_URL=https://<api-host>`, `CLIENT_URL=https://<frontend-host>`, `CMS_URL=https://<cms-host>`, `CORS_ORIGINS=https://<frontend-host>,https://<cms-host>`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `JWT_SECRET`, and `REFRESH_TOKEN_SECRET`.
+- Frontend build: `NEXT_PUBLIC_API_URL=https://<api-host>` and `NEXT_PUBLIC_SITE_URL=https://<frontend-host>`.
+- CMS build: `VITE_API_URL=https://<api-host>` and `VITE_PORTFOLIO_URL=https://<frontend-host>`.
+- Optional email: `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM`, and `CONTACT_TO`.
+
+Render supplies `PORT` to the API and Next.js services; do not hard-code a production port. Replace the example hosts with the actual Render or custom-domain origins consistently across frontend config, CMS config, API URL generation, and CORS.
+
 **Storage constraint:** the SQLite/file-upload setup is designed for one API instance with a persistent disk. Do not horizontally scale the API across instances using local SQLite/files. For multi-instance scaling, move the persistence adapter to managed PostgreSQL and media to object storage such as S3-compatible storage. Back up the persistent disk regularly.
 
 Production API startup refuses the development JWT secrets and default admin password. Never commit `.env` files or real credentials.
 
 ## Day-by-day delivery history
 
-The project is being delivered as a sequence of meaningful commits on `main`. The initial repository setup, authentication, and content model commits are already in the remote history. Subsequent commits complete authorization, dashboard/CMS, public pages, submissions, analytics, validation, deployment preparation, and final documentation. See `docs/day-by-day-plan.md` for the portfolio-specific mapping and current status.
+The project is complete, and all 14 day-wise milestone commits are pushed to `main`. The initial three commits were preserved; the original Day 3 commit is titled `content model CRUD`, with its role-based authorization hardening included in the Day 4 backend security commit. See `docs/day-by-day-plan.md` for the portfolio-specific mapping.
