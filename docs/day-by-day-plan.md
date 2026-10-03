@@ -1,88 +1,54 @@
-# Day-by-day project roadmap
+# Day-by-day delivery plan
 
-## Day 1 — Backend + database foundation
-- Create backend structure
-- Add Express server
-- Add JSON-backed data store
-- Add env configuration
+The supplied schedule includes question/submission/results language from a different kind of app. Those milestones are mapped to the matching portfolio features below; no quiz or question-bank modules are part of this project.
 
-## Day 2 — Authentication
-- Create JWT login flow
-- Add protected route middleware
-- Set admin credentials
+| Day | Portfolio milestone | Delivered scope | Commit |
+| --- | --- | --- | --- |
+| 1 | Project setup | Monorepo and backend foundation | `Day 1: backend foundation` |
+| 2 | Authentication | JWT admin login | `Day 2: authentication flow` |
+| 3 | Content models and access control | Portfolio CRUD models; protected writes and private admin data | `Day 3: content model CRUD` (access-control hardening follows in Day 4) |
+| 4 | Backend CMS foundation | SQLite storage, upload validation, contact processing, authorization | `Day 4: secure API, SQLite and media` |
+| 5 | CMS dashboard and feature management | Admin login, dashboard, CRUD editors, inbox and media screens | `Day 5: custom CMS dashboard and editors` |
+| 6 | Content model documentation | SQLite tables, fields, required values and publication rules | `Day 6: document portfolio content models` |
+| 7 | Main user interface | Responsive portfolio home, navigation, CMS-backed home sections | `Day 7: build responsive portfolio interface` |
+| 8 | Submission and processing | Contact form validation and API submission | `Day 8: connect the portfolio contact flow` |
+| 9 | Published content pages | CMS-fed About, Projects, Skills, Experience, Journal, sitemap and robots | `Day 9: add dynamic portfolio content pages` |
+| 10 | Admin dashboard workflows | Sign-in, content editing, media, inbox, analytics guide | `Day 10: document admin dashboard workflows` |
+| 11 | Admin analytics | Protected metrics and recent inquiries with focused tests | `Day 11: verify admin analytics access` |
+| 12 | Testing and validation | Auth, CRUD, contact/rate-limit and media integration coverage | `Day 12: test auth, CRUD, contact and media` |
+| 13 | Deployment preparation | Render blueprint, CI, Node version and app-local lockfile setup | `Day 13: prepare CI and production deployment` |
+| 14 | Final readiness | Complete setup, API, admin and deployment documentation | `Day 14: finalize project documentation` |
 
-## Day 3 — Content models and CRUD
-- Add about, skills, projects, blogs, experience, testimonials, and services APIs
-- Add message collection and storage
+## Run locally
 
-## Day 4 — File uploads and media APIs
-- Add upload endpoint
-- Save files in `apps/backend/uploads`
-- Expose uploaded URLs
+Use Node.js 22.13+ (Node 24 is used by CI). From the repository root:
 
-## Day 5 — CMS Admin UI shell
-- Set up Vite + React app
-- Add login page
-- Add dashboard shell
-
-## Day 6 — CRUD screens I
-- Add About editor
-- Add Skills manager
-
-## Day 7 — CRUD screens II
-- Add projects/blogs workflow
-- Add UI refinements
-
-## Day 8 — Frontend setup
-- Create Next.js app
-- Set Tailwind theme and page shell
-
-## Day 9 — CMS data integration
-- Fetch about/skills/projects from backend
-- Display live content
-
-## Day 10 — Portfolio sections
-- Add blogs, testimonials, services, and experience sections
-
-## Day 11 — Contact page and submission flow
-- Add contact form
-- Connect to `/api/contact`
-
-## Day 12 — Deployment prep: backend
-- Configure CORS
-- Set production env values
-- Prepare deployment scripts
-
-## Day 13 — Deployment prep: CMS + frontend
-- Configure frontend API URLs
-- Prepare CMS build output
-- Set production domains
-
-## Day 14 — Final QA and polish
-- Validate APIs
-- Check build outputs
-- Security review and final deployment checklist
-
-## Local commands
-
-```bash
-cd "C:\Users\User\Desktop\Portfolio Project"
-
-npm --prefix apps/backend install
-npm --prefix apps/cms install
-npm --prefix apps/frontend install
-
-npm --prefix apps/backend run dev
-npm --prefix apps/cms run dev
-npm --prefix apps/frontend run dev
+```powershell
+npm run setup
 ```
 
-## Git push workflow per day
+Open a separate terminal for each app:
 
-```bash
-git add .
-git commit -m "Day 1: backend foundation"
-git push -u origin main
+```powershell
+npm run dev:backend
+npm run dev:cms
+npm run dev:frontend
 ```
 
-Repeat for each day with the corresponding message.
+Local URLs:
+
+- Portfolio: http://localhost:3000
+- CMS: http://localhost:5173
+- API: http://localhost:5000
+
+## Verification commands
+
+```powershell
+npm run test:backend
+npm run audit
+npm run build
+```
+
+## Git milestones
+
+The initial three commits were already present on `main`; their history is preserved. Days 4–14 are each published as separate, descriptive commits. The original third commit is named for content CRUD; its missing authorization hardening is included in the Day 4 backend security commit rather than rewriting the remote history.
